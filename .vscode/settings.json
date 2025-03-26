@@ -1,0 +1,7 @@
+{
+    "explorer.expandSingleFolderWorkspaces": false,
+    "scm.compactFolders": false,
+    "editor.formatOnSave": true,
+    "editor.defaultFormatter": "esbenp.prettier-vscode",
+    "prettier.singleQuote": true
+}

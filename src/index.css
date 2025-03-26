@@ -1,2 +1,14 @@
 @import 'tailwindcss';
 @plugin "daisyui";
+
+:global(.swiper-pagination-bullet) {
+  @apply w-3 h-3 bg-gray-300 transition-all duration-300;
+}
+
+:global(.swiper-pagination-bullet-active) {
+  @apply bg-primary scale-125 shadow-md;
+}
+
+:global(.swiper-pagination-bullet:hover) {
+  @apply bg-secondary scale-150;
+}

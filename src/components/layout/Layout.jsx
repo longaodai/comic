@@ -1,5 +1,6 @@
 import { Link } from 'react-router-dom';
 import ThemeToggle from '../ui/ThemeToggle';
+import CategoryMenu from './CategoryMenu';
 
 export default function Layout({ children }) {
   return (
@@ -18,12 +19,13 @@ export default function Layout({ children }) {
                 </Link>
               </li>
             </ul>
-
-            {/* Theme Toggle Button */}
             <ThemeToggle />
           </nav>
         </div>
       </header>
+
+      {/* Category Menu */}
+      <CategoryMenu />
 
       {/* Main Content */}
       <main className="flex-1 container mx-auto px-4 py-6">{children}</main>
