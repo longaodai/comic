@@ -2,7 +2,6 @@ import { useEffect, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import { request } from '../libs/axios';
-import { ArrowUp } from 'lucide-react';
 
 export default function ComicReaderPage() {
   const { slug, chapterName } = useParams();
@@ -15,7 +14,6 @@ export default function ComicReaderPage() {
   const [prevChapter, setPrevChapter] = useState(null);
   const [nextChapter, setNextChapter] = useState(null);
   const [showStickyNav, setShowStickyNav] = useState(false);
-  const [showScrollToTop, setShowScrollToTop] = useState(false);
   const [fadeIn, setFadeIn] = useState(false); // Hiệu ứng chuyển chapter
 
   useEffect(() => {
@@ -75,7 +73,6 @@ export default function ComicReaderPage() {
         setShowStickyNav(false);
       }
 
-      setShowScrollToTop(currentScrollY > 300);
       lastScrollY = currentScrollY;
     };
 
@@ -184,16 +181,6 @@ export default function ComicReaderPage() {
           </button>
         </div>
       </div>
-
-      {/* 🔼 Nút Scroll to Top */}
-      {showScrollToTop && (
-        <button
-          onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
-          className="fixed bottom-5 right-5 bg-gray-800 text-white p-2 rounded-full shadow-md hover:bg-gray-700 transition"
-        >
-          <ArrowUp size={24} />
-        </button>
-      )}
 
       {/* 🔻 Nút Prev / Next ở cuối trang */}
       <div className="flex justify-between items-center mt-4">

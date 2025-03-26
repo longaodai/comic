@@ -6,6 +6,7 @@ import ComicDetailPage from './pages/ComicDetailPage';
 import ComicReaderPage from './pages/ComicReaderPage';
 import Layout from './components/layout/Layout';
 import ComicCategoryPage from './pages/ComicCategoryPage';
+import SearchPage from './pages/SearchPage';
 
 const App = () => {
   const { theme } = useThemeStore();
@@ -15,6 +16,7 @@ const App = () => {
       <Layout>
         <Routes>
           <Route path="/" element={<HomePage />} />
+          <Route path="/search" element={<SearchPage />} />
           <Route path="/comic-detail/:slug" element={<ComicDetailPage />} />
           <Route path="/categories/:slug" element={<ComicCategoryPage />} />
           <Route

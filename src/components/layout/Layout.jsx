@@ -1,34 +1,20 @@
-import { Link } from 'react-router-dom';
-import ThemeToggle from '../ui/ThemeToggle';
+import ScrollToTop from '../ui/ScrollToTop';
 import CategoryMenu from './CategoryMenu';
+import Header from './Header';
 
 export default function Layout({ children }) {
   return (
     <div className="min-h-screen flex flex-col bg-base-100 text-base-content">
       {/* Header */}
-      <header className="bg-primary text-primary-content shadow-md">
-        <div className="container mx-auto flex justify-between items-center px-4 py-3">
-          <h1 className="text-3xl font-bold">
-            <Link to="/">Comic</Link>
-          </h1>
-          <nav className="flex items-center gap-6 text-lg">
-            <ul className="flex gap-6">
-              <li>
-                <Link to="/" className="hover:text-secondary">
-                  Home
-                </Link>
-              </li>
-            </ul>
-            <ThemeToggle />
-          </nav>
-        </div>
-      </header>
+      <Header />
 
       {/* Category Menu */}
       <CategoryMenu />
 
       {/* Main Content */}
       <main className="flex-1 container mx-auto px-4 py-6">{children}</main>
+
+      <ScrollToTop />
 
       {/* Footer */}
       <footer className="bg-neutral text-neutral-content py-4 text-center mt-6">
