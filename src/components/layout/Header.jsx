@@ -27,12 +27,12 @@ const Header = () => {
         {/* Search Bar */}
         <form
           onSubmit={handleSearch}
-          className="hidden md:flex items-center bg-base-200 rounded-full px-4 py-2 transition-all focus-within:ring-2 focus-within:ring-secondary shadow-sm hover:shadow-md"
+          className="hidden md:flex items-center bg-base-200 rounded-full px-4 py-2 transition-all border-2 border-secondary focus-within:ring-secondary shadow-sm hover:shadow-md"
         >
           <input
             type="text"
             placeholder="Tìm kiếm truyện..."
-            className="bg-transparent outline-none px-3 py-1 w-60 text-lg focus:w-72 transition-all"
+            className="bg-transparent outline-none px-3 py-1 w-60 text-lg focus:w-72 transition-all text-secondary"
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
           />
@@ -113,12 +113,12 @@ const Header = () => {
         </div>
         <form
           onSubmit={handleSearch}
-          className="flex items-center bg-base-300 rounded-full px-4 py-2 mt-4 transition-all focus-within:ring-2 focus-within:ring-secondary shadow-sm hover:shadow-md"
+          className="flex items-center bg-base-300 rounded-full px-4 py-2 mt-4 transition-all border-2 border-secondary focus-within:ring-secondary shadow-sm hover:shadow-md"
         >
           <input
             type="text"
             placeholder="Tìm kiếm truyện..."
-            className="bg-transparent outline-none px-3 py-1 w-full text-lg focus:w-full transition-all"
+            className="bg-transparent outline-none px-3 py-1 w-full text-lg focus:w-full transition-all text-secondary"
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
           />

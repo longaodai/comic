@@ -160,7 +160,7 @@ export default function ComicReaderPage() {
           showStickyNav ? 'translate-y-0' : 'translate-y-full'
         }`}
       >
-        <div className="flex justify-between">
+        <div className="container mx-auto flex justify-between">
           <button
             disabled={!prevChapter}
             onClick={() =>
