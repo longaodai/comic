@@ -12,7 +12,7 @@ export default function Layout({ children }) {
       <CategoryMenu />
 
       {/* Main Content */}
-      <main className="flex-1 container mx-auto px-4 py-6">{children}</main>
+      <main>{children}</main>
 
       <ScrollToTop />
 

@@ -2,6 +2,9 @@ import { useEffect, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import { request } from '../libs/axios';
+import SectionTitle from '../components/ui/SectionTitle';
+import { ArrowLeft, ArrowRight } from 'lucide-react';
+import SkeletonComicReader from '../components/ui/skeletons/SkeletonComicReader';
 
 export default function ComicReaderPage() {
   const { slug, chapterName } = useParams();
@@ -13,11 +16,12 @@ export default function ComicReaderPage() {
   const [error, setError] = useState(null);
   const [prevChapter, setPrevChapter] = useState(null);
   const [nextChapter, setNextChapter] = useState(null);
+  const [allChapters, setAllChapters] = useState([]);
   const [showStickyNav, setShowStickyNav] = useState(false);
-  const [fadeIn, setFadeIn] = useState(false); // Hiệu ứng chuyển chapter
+  const [fadeIn, setFadeIn] = useState(false);
 
   useEffect(() => {
-    setFadeIn(false); // Reset hiệu ứng khi đổi chapter
+    setFadeIn(false);
 
     request
       .get(`/truyen-tranh/${slug}`)
@@ -29,9 +33,12 @@ export default function ComicReaderPage() {
           (a, b) => Number(a.chapter_name) - Number(b.chapter_name)
         );
 
+        setAllChapters(chapters);
+
         const currentIndex = chapters.findIndex(
           (ch) => ch.chapter_name === chapterName
         );
+
         if (currentIndex !== -1) {
           setPrevChapter(chapters[currentIndex - 1] || null);
           setNextChapter(chapters[currentIndex + 1] || null);
@@ -45,7 +52,7 @@ export default function ComicReaderPage() {
         setDomainCdn(chapterResponse.data.data.domain_cdn);
         setChapter(chapterResponse.data.data.item);
         setLoading(false);
-        setFadeIn(true); // Kích hoạt hiệu ứng khi load xong
+        setFadeIn(true);
 
         setTimeout(() => {
           window.scrollTo({ top: 0, behavior: 'smooth' });
@@ -81,12 +88,7 @@ export default function ComicReaderPage() {
   }, []);
 
   if (loading) {
-    return (
-      <div className="flex flex-col items-center justify-center h-screen">
-        <span className="loading loading-spinner text-primary"></span>
-        <p className="text-gray-500 mt-2">Loading...</p>
-      </div>
-    );
+    return <SkeletonComicReader />;
   }
 
   if (error) {
@@ -99,13 +101,11 @@ export default function ComicReaderPage() {
 
   return (
     <div className="container mx-auto px-4 py-6">
-      {/* 🔹 Title luôn hiển thị cố định */}
-      <h1 className="text-2xl font-bold text-center mb-4">
-        {comic?.name} - Chapter {chapter?.chapter_name}
-      </h1>
+      <SectionTitle
+        title={`${comic?.name} - Chapter ${chapter?.chapter_name}`}
+      />
 
-      {/* 🔹 Nút Prev / Next ở đầu trang */}
-      <div className="flex justify-between items-center mb-4">
+      <div className="flex justify-between items-center mb-4 gap-4">
         <button
           disabled={!prevChapter}
           onClick={() =>
@@ -113,8 +113,21 @@ export default function ComicReaderPage() {
           }
           className={`btn ${prevChapter ? 'btn-primary' : 'btn-disabled'}`}
         >
-          ← Chương trước
+          <ArrowLeft size={20} /> Chương trước
         </button>
+
+        <select
+          value={chapterName}
+          onChange={(e) => navigate(`/comic-reader/${slug}/${e.target.value}`)}
+          className="select select-bordered select-lg w-full max-w-xs focus:outline-none"
+        >
+          {allChapters.map((ch) => (
+            <option key={ch.chapter_name} value={ch.chapter_name}>
+              Chương {ch.chapter_name}{' '}
+              {ch.chapter_title ? `- ${ch.chapter_title}` : ''}
+            </option>
+          ))}
+        </select>
 
         <button
           disabled={!nextChapter}
@@ -123,11 +136,10 @@ export default function ComicReaderPage() {
           }
           className={`btn ${nextChapter ? 'btn-primary' : 'btn-disabled'}`}
         >
-          Chương tiếp theo →
+          Chương tiếp theo <ArrowRight size={20} />
         </button>
       </div>
 
-      {/* 📜 Nội dung chapter với hiệu ứng fade-in */}
       <div
         className={`flex flex-col items-center gap-2 transition-opacity duration-500 ${
           fadeIn ? 'opacity-100' : 'opacity-0'
@@ -144,46 +156,9 @@ export default function ComicReaderPage() {
         ))}
       </div>
 
-      <div
-        className={`fixed top-0 left-0 right-0 bg-black bg-opacity-80 p-3 text-white z-50 transition-transform duration-300 ${
-          showStickyNav ? 'translate-y-0' : '-translate-y-full'
-        }`}
-      >
-        <h2 className="text-lg font-bold text-center">
-          {comic?.name} - Chapter {chapter?.chapter_name}
-        </h2>
-      </div>
+      <div className="mt-20"></div>
 
-      {/* 🔻 Thanh điều hướng khi cuộn lên (ở bottom) */}
-      <div
-        className={`fixed bottom-0 left-0 right-0 bg-black bg-opacity-80 p-3 text-white z-50 transition-transform duration-300 ${
-          showStickyNav ? 'translate-y-0' : 'translate-y-full'
-        }`}
-      >
-        <div className="container mx-auto flex justify-between">
-          <button
-            disabled={!prevChapter}
-            onClick={() =>
-              navigate(`/comic-reader/${slug}/${prevChapter?.chapter_name}`)
-            }
-            className={`btn ${prevChapter ? 'btn-primary' : 'btn-disabled'}`}
-          >
-            ← Chương trước
-          </button>
-          <button
-            disabled={!nextChapter}
-            onClick={() =>
-              navigate(`/comic-reader/${slug}/${nextChapter?.chapter_name}`)
-            }
-            className={`btn ${nextChapter ? 'btn-primary' : 'btn-disabled'}`}
-          >
-            Chương tiếp theo →
-          </button>
-        </div>
-      </div>
-
-      {/* 🔻 Nút Prev / Next ở cuối trang */}
-      <div className="flex justify-between items-center mt-4">
+      <div className="flex justify-between items-center mb-4 gap-4">
         <button
           disabled={!prevChapter}
           onClick={() =>
@@ -191,8 +166,21 @@ export default function ComicReaderPage() {
           }
           className={`btn ${prevChapter ? 'btn-primary' : 'btn-disabled'}`}
         >
-          ← Chương trước
+          <ArrowLeft size={20} /> Chương trước
         </button>
+
+        <select
+          value={chapterName}
+          onChange={(e) => navigate(`/comic-reader/${slug}/${e.target.value}`)}
+          className="select select-bordered select-lg w-full max-w-xs focus:outline-none"
+        >
+          {allChapters.map((ch) => (
+            <option key={ch.chapter_name} value={ch.chapter_name}>
+              Chương {ch.chapter_name}{' '}
+              {ch.chapter_title ? `- ${ch.chapter_title}` : ''}
+            </option>
+          ))}
+        </select>
 
         <button
           disabled={!nextChapter}
@@ -201,8 +189,55 @@ export default function ComicReaderPage() {
           }
           className={`btn ${nextChapter ? 'btn-primary' : 'btn-disabled'}`}
         >
-          Chương tiếp theo →
+          Chương tiếp theo <ArrowRight size={20} />
         </button>
+      </div>
+
+      <div
+        className={`fixed bottom-0 left-0 right-0 bg-base-200 bg-opacity-90 border-t border-base-300 p-4 text-base-content z-50 transition-transform duration-300 shadow-lg ${
+          showStickyNav ? 'translate-y-0' : 'translate-y-full'
+        } rounded-t-lg`}
+      >
+        <div className="container mx-auto flex justify-between items-center gap-4">
+          <button
+            disabled={!prevChapter}
+            onClick={() =>
+              navigate(`/comic-reader/${slug}/${prevChapter?.chapter_name}`)
+            }
+            className={`btn ${
+              prevChapter ? 'btn-primary' : 'btn-disabled'
+            } flex items-center gap-1`}
+          >
+            <ArrowLeft size={20} /> Chương trước
+          </button>
+
+          <select
+            value={chapterName}
+            onChange={(e) =>
+              navigate(`/comic-reader/${slug}/${e.target.value}`)
+            }
+            className="select select-bordered select-lg w-full max-w-xs focus:outline-none"
+          >
+            {allChapters.map((ch) => (
+              <option key={ch.chapter_name} value={ch.chapter_name}>
+                Chương {ch.chapter_name}{' '}
+                {ch.chapter_title ? `- ${ch.chapter_title}` : ''}
+              </option>
+            ))}
+          </select>
+
+          <button
+            disabled={!nextChapter}
+            onClick={() =>
+              navigate(`/comic-reader/${slug}/${nextChapter?.chapter_name}`)
+            }
+            className={`btn ${
+              nextChapter ? 'btn-primary' : 'btn-disabled'
+            } flex items-center gap-1`}
+          >
+            Chương tiếp theo <ArrowRight size={20} />
+          </button>
+        </div>
       </div>
     </div>
   );

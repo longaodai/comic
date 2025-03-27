@@ -5,9 +5,11 @@ import { request } from '../libs/axios';
 import Pagination from '../components/ui/Pagination';
 import ComicCard from '../components/ui/ComicCard';
 import useDebounce from '../hooks/useDebounce';
+import SkeletonSearch from '../components/ui/skeletons/SkeletonSearch';
 
 const SearchPage = () => {
   const [comics, setComics] = useState([]);
+  const [loading, setLoading] = useState(false);
   const [searchParams, setSearchParams] = useSearchParams();
   const [pagination, setPagination] = useState({
     totalItems: 0,
@@ -21,6 +23,7 @@ const SearchPage = () => {
 
   useEffect(() => {
     if (searchQuery.trim()) {
+      setLoading(true);
       request
         .get(`/tim-kiem?keyword=${searchQuery}&page=${currentPage}`)
         .then((response) => {
@@ -33,6 +36,12 @@ const SearchPage = () => {
               response.data.data.params.pagination.currentPage || currentPage,
             pageRanges: response.data.data.params.pagination.pageRanges || 3,
           });
+        })
+        .catch(() => {
+          setComics([]);
+        })
+        .finally(() => {
+          setLoading(false);
           window.scrollTo({ top: 0, behavior: 'smooth' });
         });
     }
@@ -47,12 +56,11 @@ const SearchPage = () => {
   };
 
   return (
-    <div className="container mx-auto p-4">
+    <div className="container mx-auto p-4 min-h-screen">
       <h1 className="text-4xl font-bold text-center my-6 text-primary">
         Kết quả tìm kiếm
       </h1>
 
-      {/* Search Bar */}
       <form
         onSubmit={handleSearch}
         className="flex items-center bg-base-200 rounded-full px-4 py-2 mb-6 max-w-lg mx-auto focus-within:ring-2 focus-within:ring-secondary shadow-sm hover:shadow-md"
@@ -72,21 +80,19 @@ const SearchPage = () => {
         </button>
       </form>
 
-      {/* Comic List */}
-      {comics.length > 0 ? (
+      {loading ? (
+        <SkeletonSearch />
+      ) : comics.length > 0 ? (
         <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-6">
           {comics.map((comic, index) => (
             <ComicCard comic={comic} key={comic.slug || index} />
           ))}
         </div>
       ) : (
-        <p className="text-center text-lg text-gray-500">
-          Không tìm thấy kết quả nào.
-        </p>
+        <p className="text-center text-lg text-gray-500"></p>
       )}
 
-      {/* Pagination */}
-      {pagination.totalItems > pagination.totalItemsPerPage && (
+      {!loading && pagination.totalItems > pagination.totalItemsPerPage && (
         <Pagination
           totalItems={pagination.totalItems}
           itemsPerPage={pagination.totalItemsPerPage}

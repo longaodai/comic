@@ -57,11 +57,6 @@ const Header = () => {
                 Thể Loại
               </Link>
             </li>
-            <li>
-              <Link to="/top" className="hover:text-secondary">
-                Top Truyện
-              </Link>
-            </li>
           </ul>
           <ThemeToggle />
         </nav>
@@ -96,15 +91,6 @@ const Header = () => {
               onClick={() => setMenuOpen(false)}
             >
               Thể Loại
-            </Link>
-          </li>
-          <li>
-            <Link
-              to="/top"
-              className="block"
-              onClick={() => setMenuOpen(false)}
-            >
-              Top Truyện
             </Link>
           </li>
         </ul>

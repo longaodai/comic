@@ -2,82 +2,91 @@ import { useEffect, useState } from 'react';
 import { request } from '../libs/axios';
 import ComicCard from '../components/ui/ComicCard';
 import HomeSlider from '../components/ui/HomeSlider';
-
-const SectionTitle = ({ title, color }) => (
-  <div className="text-center my-6">
-    <h2
-      className="text-2xl sm:text-4xl font-extrabold uppercase tracking-wide"
-      style={{ color }}
-    >
-      {title}
-    </h2>
-    <div
-      className="mt-2 h-1 w-16 sm:w-24 mx-auto rounded-full"
-      style={{ backgroundColor: color }}
-    ></div>
-  </div>
-);
+import SectionTitle from '../components/ui/SectionTitle';
+import SkeletonHomePage from '../components/ui/skeletons/SkeletonHomePage';
 
 export default function HomePage() {
   const [latestComics, setLatestComics] = useState([]);
   const [upcomingComics, setUpcomingComics] = useState([]);
   const [ongoingComics, setOngoingComics] = useState([]);
   const [completedComics, setCompletedComics] = useState([]);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    request.get(`/danh-sach/truyen-moi`).then((response) => {
-      setLatestComics(response.data.data.items || []);
-    });
-    request.get(`/danh-sach/sap-ra-mat`).then((response) => {
-      setUpcomingComics(response.data.data.items || []);
-    });
-    request.get(`/danh-sach/dang-phat-hanh`).then((response) => {
-      setOngoingComics(response.data.data.items || []);
-    });
-    request.get(`/danh-sach/hoan-thanh`).then((response) => {
-      setCompletedComics(response.data.data.items || []);
-    });
+    const fetchData = async () => {
+      try {
+        const [latest, upcoming, ongoing, completed] = await Promise.all([
+          request.get(`/danh-sach/truyen-moi`),
+          request.get(`/danh-sach/sap-ra-mat`),
+          request.get(`/danh-sach/dang-phat-hanh`),
+          request.get(`/danh-sach/hoan-thanh`),
+        ]);
+
+        setLatestComics(latest.data.data.items || []);
+        setUpcomingComics(upcoming.data.data.items || []);
+        setOngoingComics(ongoing.data.data.items || []);
+        setCompletedComics(completed.data.data.items || []);
+      } catch (error) {
+        console.error('Error fetching data:', error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchData();
   }, []);
 
+  if (loading) {
+    return <SkeletonHomePage />;
+  }
+
   return (
-    <div className="container mx-auto p-2 sm:p-4 space-y-8 sm:space-y-10">
-      <HomeSlider />
+    <div className="container mx-auto p-2 sm:p-4 space-y-8 sm:space-y-10 pt-0">
+      <HomeSlider comics={latestComics} />
 
-      <div className="rounded-xl shadow-xl">
-        <SectionTitle title="Latest Comics" color="#ff416c" />
-        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-3 sm:gap-6">
-          {latestComics.map((comic) => (
-            <ComicCard comic={comic} key={comic.slug} />
-          ))}
+      {latestComics.length > 0 && (
+        <div className="rounded-xl shadow-xl mt-16">
+          <SectionTitle title="Latest Comics" color="#ff416c" />
+          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-3 sm:gap-6">
+            {latestComics.map((comic) => (
+              <ComicCard comic={comic} key={comic.slug} />
+            ))}
+          </div>
         </div>
-      </div>
+      )}
 
-      <div className="rounded-xl shadow-xl">
-        <SectionTitle title="Upcoming Comics" color="#56ccf2" />
-        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-3 sm:gap-6">
-          {upcomingComics.map((comic) => (
-            <ComicCard comic={comic} key={comic.slug} />
-          ))}
+      {upcomingComics.length > 0 && (
+        <div className="rounded-xl shadow-xl mt-16">
+          <SectionTitle title="Upcoming Comics" color="#56ccf2" />
+          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-3 sm:gap-6">
+            {upcomingComics.map((comic) => (
+              <ComicCard comic={comic} key={comic.slug} />
+            ))}
+          </div>
         </div>
-      </div>
+      )}
 
-      <div className="rounded-xl shadow-xl">
-        <SectionTitle title="Ongoing Comics" color="#f2994a" />
-        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-3 sm:gap-6">
-          {ongoingComics.map((comic) => (
-            <ComicCard comic={comic} key={comic.slug} />
-          ))}
+      {ongoingComics.length > 0 && (
+        <div className="rounded-xl shadow-xl mt-16">
+          <SectionTitle title="Ongoing Comics" color="#f2994a" />
+          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-3 sm:gap-6">
+            {ongoingComics.map((comic) => (
+              <ComicCard comic={comic} key={comic.slug} />
+            ))}
+          </div>
         </div>
-      </div>
+      )}
 
-      <div className="rounded-xl shadow-xl">
-        <SectionTitle title="Completed Comics" color="#00b09b" />
-        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-3 sm:gap-6">
-          {completedComics.map((comic) => (
-            <ComicCard comic={comic} key={comic.slug} />
-          ))}
+      {completedComics.length > 0 && (
+        <div className="rounded-xl shadow-xl mt-16">
+          <SectionTitle title="Completed Comics" color="#00b09b" />
+          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-3 sm:gap-6">
+            {completedComics.map((comic) => (
+              <ComicCard comic={comic} key={comic.slug} />
+            ))}
+          </div>
         </div>
-      </div>
+      )}
     </div>
   );
 }

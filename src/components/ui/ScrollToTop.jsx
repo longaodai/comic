@@ -20,7 +20,7 @@ const ScrollToTop = () => {
       {showScrollToTop && (
         <button
           onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
-          className="fixed bottom-10 right-10 bg-gray-800 text-white p-2 rounded-full shadow-md hover:bg-gray-700 transition"
+          className="fixed bottom-20 right-10 bg-gray-800 text-white p-2 rounded-full shadow-md hover:bg-gray-700 transition"
         >
           <ArrowUp size={24} />
         </button>

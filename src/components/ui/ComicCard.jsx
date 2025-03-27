@@ -8,6 +8,7 @@ export default function ComicCard({ comic }) {
         <img
           src={`https://img.otruyenapi.com/uploads/comics/${comic.thumb_url}`}
           alt={comic.name}
+          loading="lazy"
           className="w-full h-full object-cover rounded-sm group-hover:opacity-80"
         />
         {/* Overlay Gradient */}
